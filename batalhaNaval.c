@@ -64,6 +64,72 @@ int main() {
     //tabuleiro[1+2][9-2] = navio_D[2] -> tabuleiro[3][7]
   }
 
+  //HABILIDADE CONE
+  int cone[3][5] = {
+    {0,0,5,0,0},
+    {0,5,5,5,0},
+    {5,5,5,5,5}
+  };
+  int linha_inicial_cone = 7;
+  int coluna_inicial_cone = 0;
+
+  for(int i = 0; i < 3; i++){
+    for(int j = 0; j < 5; j++){
+      if(cone[i][j] != 0) { // Se não for 0 no cone
+        if(tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] == 3) {
+          tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] = 1; // Colisão: navio + habilidade = 1
+        } else {
+          tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] = cone[i][j]; // Coloca o 5
+        }
+      }
+      // Se for 0 no cone, não faz nada (preserva o que já estava no tabuleiro)
+    }
+  }
+
+  //HABILIDADE CRUZ
+  int cruz[3][5] = {
+    {0,0,5,0,0},
+    {5,5,5,5,5},
+    {0,0,5,0,0}
+  };
+  int linha_inicial_cruz = 1;
+  int coluna_inicial_cruz = 4;
+
+  for(int i = 0; i < 3; i++){
+    for(int j = 0; j < 5; j++){
+      if(cruz[i][j] != 0) { // Se não for 0 na cruz
+        if(tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] == 3) {
+          tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] = 1; // Colisão: navio + habilidade = 1
+        } else {
+          tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] = cruz[i][j]; // Coloca o 5
+        }
+      }
+      // Se for 0 na cruz, não faz nada (preserva o que já estava no tabuleiro)
+    }
+  }
+
+  //HABILIDADE OCTAEDRO
+  int octaedro[3][3] = {
+    {0,5,0},
+    {5,5,5},
+    {0,5,0}
+  };
+  int linha_inicial_octaedro = 0;
+  int coluna_inicial_octaedro = 0;
+
+  for(int i = 0; i < 3; i++){
+    for(int j = 0; j < 3; j++){
+      if(octaedro[i][j] != 0) { // Se não for 0 no octaedro
+        if(tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] == 3) {
+          tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] = 1; // Colisão: navio + habilidade = 1
+        } else {
+          tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] = octaedro[i][j]; // Coloca o 5
+        }
+      }
+      // Se for 0 no octaedro, não faz nada (preserva o que já estava no tabuleiro)
+    }
+  }
+
   //EXIBIÇÃO DO TABULEIRO
   printf("===== BATALHA NAVAL =====\n\n");
   
