@@ -1,7 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define LINHAS 10
 #define COLUNAS 10
+#define AGUA 0
+#define NAVIO 3
+#define NAVIO_ATINGIDO 1
+#define HABILIDADE_MARCA 5
 
 int main() {
   //TABULEIRO ZERADO
@@ -9,7 +14,7 @@ int main() {
   // l = linha   &   c = coluna
   for(int l = 0; l < LINHAS; l++) {
     for(int c = 0; c < COLUNAS; c++) {
-      tabuleiro[l][c] = 0;
+      tabuleiro[l][c] = AGUA;
     }
   }
 
@@ -17,7 +22,7 @@ int main() {
   int tamanho_navio = 3;
 
   //NAVIO A
-  int navio_A[3] = {3, 3, 3};
+  int navio_A[3] = {NAVIO, NAVIO, NAVIO};
   int linha_navio_A = 2;
   int coluna_inicial_navio_A = 3;
   
@@ -29,7 +34,7 @@ int main() {
   }
 
   //NAVIO B
-  int navio_B[3] = {3, 3, 3};
+  int navio_B[3] = {NAVIO, NAVIO, NAVIO};
   int coluna_navio_B = 6;
   int linha_inicial_navio_B = 6;
 
@@ -41,7 +46,7 @@ int main() {
   }
 
   //NAVIO C
-  int navio_C[3] = {3, 3, 3};
+  int navio_C[3] = {NAVIO, NAVIO, NAVIO};
   int linha_inicial_navio_C = 3;
   int coluna_inicial_navio_C = 0;
 
@@ -53,7 +58,7 @@ int main() {
   }
 
   //NAVIO D
-  int navio_D[3] = {3, 3, 3};
+  int navio_D[3] = {NAVIO, NAVIO, NAVIO};
   int linha_inicial_navio_D = 1;
   int coluna_inicial_navio_D = 9;
 
@@ -64,66 +69,125 @@ int main() {
     //tabuleiro[1+2][9-2] = navio_D[2] -> tabuleiro[3][7]
   }
 
-  //HABILIDADE CONE
-  int cone[3][5] = {
-    {0,0,5,0,0},
-    {0,5,5,5,0},
-    {5,5,5,5,5}
-  };
+  //HABILIDADE CONE - Geração programática
+  int cone[3][5];
+  // Inicializar matriz com zeros
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 5; j++) {
+      cone[i][j] = 0;
+    }
+  }
+  // Criar padrão cone usando loops e condicionais
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 5; j++) {
+      // Padrão cone: cresce de cima para baixo
+      if(i == 0 && j == 2) { // Primeira linha: só o centro
+        cone[i][j] = HABILIDADE_MARCA;
+      } else if(i == 1 && (j >= 1 && j <= 3)) { // Segunda linha: centro ± 1
+        cone[i][j] = HABILIDADE_MARCA;
+      } else if(i == 2) { // Terceira linha: toda a linha
+        cone[i][j] = HABILIDADE_MARCA;
+      }
+    }
+  }
+  
   int linha_inicial_cone = 7;
   int coluna_inicial_cone = 0;
 
   for(int i = 0; i < 3; i++){
     for(int j = 0; j < 5; j++){
       if(cone[i][j] != 0) { // Se não for 0 no cone
-        if(tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] == 3) {
-          tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] = 1; // Colisão: navio + habilidade = 1
-        } else {
-          tabuleiro[linha_inicial_cone + i][coluna_inicial_cone + j] = cone[i][j]; // Coloca o 5
+        int linha_tab = linha_inicial_cone + i;
+        int coluna_tab = coluna_inicial_cone + j;
+        // Verificação de limites do tabuleiro
+        if(linha_tab >= 0 && linha_tab < LINHAS && coluna_tab >= 0 && coluna_tab < COLUNAS) {
+          if(tabuleiro[linha_tab][coluna_tab] == NAVIO) {
+            tabuleiro[linha_tab][coluna_tab] = NAVIO_ATINGIDO; // Colisão: navio + habilidade = 1
+          } else if(tabuleiro[linha_tab][coluna_tab] == AGUA) {
+            tabuleiro[linha_tab][coluna_tab] = cone[i][j]; // Aplica habilidade na água
+          }
         }
       }
       // Se for 0 no cone, não faz nada (preserva o que já estava no tabuleiro)
     }
   }
 
-  //HABILIDADE CRUZ
-  int cruz[3][5] = {
-    {0,0,5,0,0},
-    {5,5,5,5,5},
-    {0,0,5,0,0}
-  };
+  //HABILIDADE CRUZ - Geração programática
+  int cruz[3][5];
+  // Inicializar matriz com zeros
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 5; j++) {
+      cruz[i][j] = 0;
+    }
+  }
+  // Criar padrão cruz usando loops e condicionais
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 5; j++) {
+      // Padrão cruz: linha do meio toda preenchida + coluna do meio toda preenchida
+      if(i == 1) { // Linha do meio: toda preenchida
+        cruz[i][j] = HABILIDADE_MARCA;
+      } else if(j == 2) { // Coluna do meio: toda preenchida
+        cruz[i][j] = HABILIDADE_MARCA;
+      }
+    }
+  }
+  
   int linha_inicial_cruz = 1;
   int coluna_inicial_cruz = 4;
 
   for(int i = 0; i < 3; i++){
     for(int j = 0; j < 5; j++){
       if(cruz[i][j] != 0) { // Se não for 0 na cruz
-        if(tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] == 3) {
-          tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] = 1; // Colisão: navio + habilidade = 1
-        } else {
-          tabuleiro[linha_inicial_cruz + i][coluna_inicial_cruz + j] = cruz[i][j]; // Coloca o 5
+        int linha_tab = linha_inicial_cruz + i;
+        int coluna_tab = coluna_inicial_cruz + j;
+        // Verificação de limites do tabuleiro
+        if(linha_tab >= 0 && linha_tab < LINHAS && coluna_tab >= 0 && coluna_tab < COLUNAS) {
+          if(tabuleiro[linha_tab][coluna_tab] == NAVIO) {
+            tabuleiro[linha_tab][coluna_tab] = NAVIO_ATINGIDO; // Colisão: navio + habilidade = 1
+          } else if(tabuleiro[linha_tab][coluna_tab] == AGUA) {
+            tabuleiro[linha_tab][coluna_tab] = cruz[i][j]; // Aplica habilidade na água
+          }
         }
       }
       // Se for 0 na cruz, não faz nada (preserva o que já estava no tabuleiro)
     }
   }
 
-  //HABILIDADE OCTAEDRO
-  int octaedro[3][3] = {
-    {0,5,0},
-    {5,5,5},
-    {0,5,0}
-  };
+  //HABILIDADE OCTAEDRO - Geração programática usando distância de Manhattan
+  int octaedro[3][3];
+  // Inicializar matriz com zeros
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      octaedro[i][j] = 0;
+    }
+  }
+  // Criar padrão octaedro (losango) usando distância de Manhattan
+  int centro = 1; // Centro da matriz 3x3 está na posição [1][1]
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      // Distância de Manhattan: |i - centro| + |j - centro|
+      int distancia = abs(i - centro) + abs(j - centro);
+      if(distancia <= centro) { // Se a distância for <= raio do losango
+        octaedro[i][j] = HABILIDADE_MARCA;
+      }
+    }
+  }
+  
   int linha_inicial_octaedro = 0;
   int coluna_inicial_octaedro = 0;
 
   for(int i = 0; i < 3; i++){
     for(int j = 0; j < 3; j++){
       if(octaedro[i][j] != 0) { // Se não for 0 no octaedro
-        if(tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] == 3) {
-          tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] = 1; // Colisão: navio + habilidade = 1
-        } else {
-          tabuleiro[linha_inicial_octaedro + i][coluna_inicial_octaedro + j] = octaedro[i][j]; // Coloca o 5
+        int linha_tab = linha_inicial_octaedro + i;
+        int coluna_tab = coluna_inicial_octaedro + j;
+        // Verificação de limites do tabuleiro
+        if(linha_tab >= 0 && linha_tab < LINHAS && coluna_tab >= 0 && coluna_tab < COLUNAS) {
+          if(tabuleiro[linha_tab][coluna_tab] == NAVIO) {
+            tabuleiro[linha_tab][coluna_tab] = NAVIO_ATINGIDO; // Colisão: navio + habilidade = 1
+          } else if(tabuleiro[linha_tab][coluna_tab] == AGUA) {
+            tabuleiro[linha_tab][coluna_tab] = octaedro[i][j]; // Aplica habilidade na água
+          }
         }
       }
       // Se for 0 no octaedro, não faz nada (preserva o que já estava no tabuleiro)
