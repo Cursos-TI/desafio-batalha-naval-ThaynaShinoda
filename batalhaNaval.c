@@ -1,11 +1,14 @@
 #include <stdio.h>
 
+#define LINHAS 10
+#define COLUNAS 10
+
 int main() {
   //TABULEIRO ZERADO
-  int tabuleiro[10][10];
+  int tabuleiro[LINHAS][COLUNAS];
   // l = linha   &   c = coluna
-  for(int l = 0; l < 10; l++) {
-    for(int c = 0; c < 10; c++) {
+  for(int l = 0; l < LINHAS; l++) {
+    for(int c = 0; c < COLUNAS; c++) {
       tabuleiro[l][c] = 0;
     }
   }
@@ -35,6 +38,30 @@ int main() {
     //tabuleiro[6+0][6] = navio_B[0]
     //tabuleiro[6+1][6] = navio_B[1]
     //tabuleiro[6+2][6] = navio_B[2]
+  }
+
+  //NAVIO C
+  int navio_C[3] = {3, 3, 3};
+  int linha_inicial_navio_C = 3;
+  int coluna_inicial_navio_C = 0;
+
+  for(int x = 0; x < tamanho_navio; x++){
+    tabuleiro[linha_inicial_navio_C + x][coluna_inicial_navio_C + x] = navio_C[x];
+    //tabuleiro[3+0][0+0] = navio_C[0] -> tabuleiro[3][0]
+    //tabuleiro[3+1][0+1] = navio_C[1] -> tabuleiro[4][1]
+    //tabuleiro[3+2][0+2] = navio_C[2] -> tabuleiro[5][2]
+  }
+
+  //NAVIO D
+  int navio_D[3] = {3, 3, 3};
+  int linha_inicial_navio_D = 1;
+  int coluna_inicial_navio_D = 9;
+
+  for(int x = 0; x < tamanho_navio; x++) {
+    tabuleiro[linha_inicial_navio_D + x][coluna_inicial_navio_D - x] = navio_D[x];
+    //tabuleiro[1+0][9-0] = navio_D[0] -> tabuleiro[1][9]
+    //tabuleiro[1+1][9-1] = navio_D[1] -> tabuleiro[2][8]
+    //tabuleiro[1+2][9-2] = navio_D[2] -> tabuleiro[3][7]
   }
 
   //EXIBIÇÃO DO TABULEIRO
